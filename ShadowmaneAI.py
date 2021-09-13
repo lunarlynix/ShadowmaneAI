@@ -31,10 +31,21 @@ while True:
         roi_color = frame[y:y+h, x:x+w]
         face_img = frame[y:y+h, x:x+w]
         blob=cv2.dnn.blobFromImage(face_img, 1.0, (227,227), MODEL_MEAN_VALUES, swapRB=False)
+        
+        # Gender 
         genderNet.setInput(blob)
         genderPreds=genderNet.forward()
         gender=genderList[genderPreds[0].argmax()]
         print(f'Gender: {gender}')
+
+        # Age
+        ageNet.setInput(blob)
+        agePreds=ageNet.forward()
+        age=ageList[agePreds[0].argmax()]
+        print(f'Age: {age[1:-1]} years')
+
+        # Facemask
+
         eyes = eye_cascade.detectMultiScale(roi_gray, 1.3, 5)
         for (ex, ey, ew, eh) in eyes:
             cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 5)
